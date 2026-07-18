@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#155e75">
+<title>أدوات المطابقة والرقابة المالية</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/css/app.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+<header class="topbar"><img src="assets/icons/icon.svg" alt=""><div class="brand"><h1>أدوات المطابقة والرقابة المالية</h1><p>التسوية البنكية • مطابقة الحسابات • الموازنة مقابل الفعلي</p></div><div class="top-actions"><button id="installBtn" class="btn light hidden">تثبيت</button><button id="menuBtn" class="btn light">☰</button></div></header>
+<div class="layout">
+<aside id="sidebar"><nav class="nav">
+<button class="active" data-page="home">الرئيسية</button>
+<button data-page="bank">التسوية البنكية</button>
+<button data-page="parties">مطابقة العملاء والموردين</button>
+<button data-page="budget">الموازنة مقابل الفعلي</button>
+<button data-page="reports">التقارير والتصدير</button>
+<button data-page="help">طريقة الاستخدام</button>
+</nav></aside>
+<main>
+<section id="home" class="page active"><div class="page-head"><div><h2>لوحة الأدوات</h2><p>اختر الأداة المطلوبة، ثم ارفع الملفات وحدد الأعمدة وابدأ التحليل.</p></div></div>
+<div class="tools"><article class="tool"><b>التسوية البنكية</b><p>مطابقة دفاتر الشركة مع كشف البنك وإعداد مذكرة التسوية.</p><button class="btn primary go" data-page="bank">فتح الأداة</button></article><article class="tool"><b>مطابقة العملاء والموردين</b><p>مطابقة المدين مع الدائن وإظهار الفروقات وأسباب عدم المطابقة.</p><button class="btn primary go" data-page="parties">فتح الأداة</button></article><article class="tool"><b>الموازنة مقابل الفعلي</b><p>تحليل الانحراف بالقيمة والنسبة حسب الفترة والحساب والأبعاد.</p><button class="btn primary go" data-page="budget">فتح الأداة</button></article></div>
+<div class="panel"><h3>صيغ الملفات المدعومة</h3><div class="grid3"><div class="notice">Excel وCSV مع تعيين ذكي للأعمدة.</div><div class="notice">PDF نصي مع استخراج السطور والجداول التقريبية.</div><div class="notice">PDF ممسوح ضوئيًا عبر OCR مع مراجعة قبل الاعتماد.</div></div></div></section>
+
+<section id="bank" class="page"><div class="page-head"><div><h2>التسوية البنكية</h2><p>دفاتر الشركة مقابل كشف البنك، مع تسوية الشهر السابق.</p></div><div class="row"><div class="field"><label>فرق الأيام المسموح</label><input id="bankDays" type="number" min="0" max="31" value="3"></div><div class="field"><label>فرق المبلغ</label><input id="bankTolerance" type="number" min="0" step="0.01" value="0"></div><button id="runBank" class="btn primary">تنفيذ المطابقة</button></div></div>
+<div class="grid2"><div class="panel"><h3>دفاتر الشركة</h3><label class="upload"><input id="bankCompanyFile" type="file" accept=".xlsx,.xls,.csv,.pdf"><b>رفع دفاتر الشركة</b><small>Excel أو CSV أو PDF</small></label><div id="bankCompanyStatus" class="status">لم يتم تحميل ملف.</div></div><div class="panel"><h3>كشف البنك</h3><label class="upload"><input id="bankStatementFile" type="file" accept=".xlsx,.xls,.csv,.pdf"><b>رفع كشف البنك</b><small>Excel أو CSV أو PDF</small></label><div id="bankStatementStatus" class="status">لم يتم تحميل ملف.</div></div></div>
+<div class="panel"><h3>بيانات التسوية</h3><div class="row"><div class="field"><label>رصيد دفاتر الشركة</label><input id="companyClosing" type="number" step="0.01" value="0"></div><div class="field"><label>رصيد كشف البنك</label><input id="bankClosing" type="number" step="0.01" value="0"></div><div class="field"><label>تسوية الشهر السابق</label><input id="priorRecon" type="number" step="0.01" value="0"></div><button id="bankSample" class="btn soft">تحميل مثال</button></div></div>
+<div id="bankSummary" class="summary-box"></div><div class="tabs" id="bankTabs"><button class="active" data-view="matched">المطابق</button><button data-view="company">غير مطابق بدفاتر الشركة</button><button data-view="bank">غير مطابق بكشف البنك</button><button data-view="memo">مذكرة التسوية</button></div><div class="panel"><div class="table-wrap"><table><thead id="bankHead"></thead><tbody id="bankBody"></tbody></table></div></div></section>
+
+<section id="parties" class="page"><div class="page-head"><div><h2>مطابقة حسابات العملاء والموردين</h2><p>المطابقة تكون بين المدين في كشف والدائن في الكشف الآخر دون إعادة استخدام العملية.</p></div><div class="row"><div class="field"><label>نوع المطابقة</label><select id="partyType"><option value="customer">عميل</option><option value="vendor">مورد</option></select></div><div class="field"><label>فرق الأيام</label><input id="partyDays" type="number" min="0" max="31" value="3"></div><div class="field"><label>فرق المبلغ</label><input id="partyTolerance" type="number" min="0" step="0.01" value="0"></div><button id="runParties" class="btn primary">تنفيذ المطابقة</button></div></div>
+<div class="grid2"><div class="panel"><h3>كشف دفاترنا</h3><label class="upload"><input id="partyOursFile" type="file" accept=".xlsx,.xls,.csv,.pdf"><b>رفع كشف دفاترنا</b><small>Excel أو CSV أو PDF</small></label><div id="partyOursStatus" class="status">لم يتم تحميل ملف.</div></div><div class="panel"><h3>كشف الطرف الآخر</h3><label class="upload"><input id="partyTheirsFile" type="file" accept=".xlsx,.xls,.csv,.pdf"><b>رفع كشف الطرف الآخر</b><small>Excel أو CSV أو PDF</small></label><div id="partyTheirsStatus" class="status">لم يتم تحميل ملف.</div></div></div><div class="row no-print" style="margin-bottom:12px"><button id="partySample" class="btn soft">تحميل مثال</button></div>
+<div id="partySummary" class="summary-box"></div><div class="tabs" id="partyTabs"><button class="active" data-view="matched">المطابق</button><button data-view="ours">غير مطابق في دفاترنا</button><button data-view="theirs">غير مطابق لدى الطرف الآخر</button></div><div class="panel"><div class="table-wrap"><table><thead id="partyHead"></thead><tbody id="partyBody"></tbody></table></div></div></section>
+
+<section id="budget" class="page"><div class="page-head"><div><h2>الموازنة مقابل الفعلي</h2><p>تحليل الانحراف بالقيمة والنسبة مع رسوم بيانية.</p></div><div class="row"><div class="field"><label>التجميع حسب</label><select id="budgetGroup"><option value="account">الحساب</option><option value="period">الفترة</option><option value="department">القسم</option><option value="costCenter">مركز التكلفة</option></select></div><button id="runBudget" class="btn primary">تنفيذ التحليل</button></div></div>
+<div class="grid2"><div class="panel"><h3>ملف الموازنة</h3><label class="upload"><input id="budgetFile" type="file" accept=".xlsx,.xls,.csv,.pdf"><b>رفع الموازنة</b><small>Excel أو CSV أو PDF</small></label><div id="budgetStatus" class="status">لم يتم تحميل ملف.</div></div><div class="panel"><h3>ملف الفعلي</h3><label class="upload"><input id="actualFile" type="file" accept=".xlsx,.xls,.csv,.pdf"><b>رفع الفعلي</b><small>Excel أو CSV أو PDF</small></label><div id="actualStatus" class="status">لم يتم تحميل ملف.</div></div></div><div class="row no-print" style="margin-bottom:12px"><button id="budgetSample" class="btn soft">تحميل مثال</button></div>
+<div id="budgetSummary" class="summary-box"></div><div class="grid2"><div class="panel"><h3>الرسم البياني</h3><div class="chart"><canvas id="budgetChart"></canvas></div></div><div class="panel"><h3>أهم الانحرافات</h3><div id="budgetInsights"></div></div></div><div class="panel"><div class="table-wrap"><table><thead id="budgetHead"></thead><tbody id="budgetBody"></tbody></table></div></div></section>
+
+<section id="reports" class="page"><div class="page-head"><div><h2>التقارير والتصدير</h2><p>تصدير نتائج الأداة الحالية أو طباعة تقرير وحفظه PDF.</p></div><div class="row no-print"><button id="exportCsv" class="btn soft">تصدير CSV</button><button id="exportXlsx" class="btn soft">تصدير Excel</button><button id="printReport" class="btn primary">طباعة / حفظ PDF</button></div></div><div id="reportContent" class="panel print-report"><h2>تقرير أدوات المطابقة والرقابة المالية</h2><p>نفّذ إحدى الأدوات أولًا ليظهر التقرير هنا.</p></div></section>
+
+<section id="help" class="page"><div class="page-head"><div><h2>طريقة الاستخدام</h2><p>خطوات موحدة لجميع الأدوات.</p></div></div><div class="panel"><ol><li>ارفع الملف الأول والثاني.</li><li>سيعرض التطبيق شاشة تعيين الأعمدة تلقائيًا.</li><li>راجع أول 8 صفوف وحدد الأعمدة المطلوبة.</li><li>في PDF النصي سيحاول التطبيق تقسيم السطور إلى أعمدة. للملف الممسوح شغّل OCR.</li><li>نفّذ التحليل وراجع النتائج ثم صدّرها.</li></ol><div class="notice">قراءة PDF العامة لا تضمن جدولًا مثاليًا لأن تصميمات الكشوف تختلف؛ لذلك لا يتم اعتماد البيانات قبل مراجعتها وتعيين الأعمدة.</div></div><div class="panel"><h3>قوالب جاهزة</h3><p><a href="templates/bank_company_template.csv">قالب دفاتر الشركة</a></p><p><a href="templates/bank_statement_template.csv">قالب كشف البنك</a></p><p><a href="templates/party_statement_template.csv">قالب كشف العميل أو المورد</a></p><p><a href="templates/budget_actual_template.csv">قالب الموازنة والفعلي</a></p></div></section>
+</main></div>
+
+<div id="mappingModal" class="modal hidden"><div class="modal-box"><div class="modal-head"><div><h3>تعيين أعمدة الملف</h3><p id="mappingInfo"></p></div><button id="closeMapping" class="btn soft">إغلاق</button></div><div id="pdfOptions" class="notice hidden" style="margin-top:12px">إذا كانت المعاينة فارغة أو مشوهة، استخدم OCR. قد تستغرق العملية وقتًا بحسب عدد الصفحات.<div class="row" style="margin-top:8px"><button id="runOcr" class="btn primary">تشغيل OCR</button></div><div id="ocrStatus"></div></div><div id="mappingGrid" class="mapping-grid"></div><h3>معاينة أول 8 صفوف</h3><div class="table-wrap"><table><thead id="mapHead"></thead><tbody id="mapBody"></tbody></table></div><div class="modal-foot"><div id="mapValidation" class="status">حدد الأعمدة المطلوبة.</div><button id="confirmMapping" class="btn primary">اعتماد البيانات</button></div></div></div>
+<div id="toast" class="toast hidden"></div>
+<script src="assets/js/app.js"></script>
+</body></html>
